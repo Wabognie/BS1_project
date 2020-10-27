@@ -34,21 +34,21 @@ Se = np.zeros(t)
 
 
 a[0] = 100
-b[0] = 100
-c[0] = 100
+b[0] = 200
+c[0] = 150
 
 A[0] = 0
 B[0] = 0
 C[0] = 0
 
-S[0] = 0
-Se[0] = 0
+S[0] = 1
+Se[0] = 1
 
 
 for i in range(0,t-1):
     beta = np.random.normal(loc = 1.0, scale = 0.05)
 
-    a[i+1] = a[i] + t *(-a[i]+(alpha/(1+C[i])))
+    a[i+1] = a[i] + t *(-a[i]+(alpha/(1+C[i]**n)))
     b[i+1] = b[i] + t *(-b[i]+(alpha/(1+A[i]**n)))
     c[i+1] = c[i] + t *(-c[i]+(alpha/(1+B[i]**n))+(kappa*S[i]/1+S[i]))
 
@@ -56,12 +56,9 @@ for i in range(0,t-1):
     B[i+1] = B[i]+t*(beta*(b[i]-B[i]))
     C[i+1] = C[i]+t*(beta*(c[i]-C[i]))
 
-    S[i+1] = S[i]+t*(-k_s0*S[i]+k_s1*A[i]-eta*(S[i]-Se[i]))
+    S[i+1] = S[i]+t*((-k_s0*S[i])+(k_s1*A[i])-(eta*(S[i]-Se[i])))
 
-    Se[i+1] = Q*np.mean(S)
-
-#plt.plot(Se)
-#plt.plot(S)
+    Se[i+1] = Q*np.mean(S[0:i+1])
 
 
 plt.plot(Se)
