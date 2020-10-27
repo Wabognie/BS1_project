@@ -6,9 +6,9 @@ retry all figures of article
 
 import numpy as np
 import matplotlib.pyplot as plt
+import random
 
-
-n = 10**4
+n = 2
 
 alpha = 216
 kappa = 20
@@ -46,7 +46,7 @@ Se[0] = 1
 
 
 for i in range(0,t-1):
-    beta = np.random.normal(loc = 1.0, scale = 0.05)
+    beta = random.gauss(1,0.05)
 
     a[i+1] = a[i] + t *(-a[i]+(alpha/(1+C[i]**n)))
     b[i+1] = b[i] + t *(-b[i]+(alpha/(1+A[i]**n)))
@@ -59,7 +59,6 @@ for i in range(0,t-1):
     S[i+1] = S[i]+t*((-k_s0*S[i])+(k_s1*A[i])-(eta*(S[i]-Se[i])))
 
     Se[i+1] = Q*np.mean(S[0:i+1])
-
 
 plt.plot(Se)
 plt.show()
