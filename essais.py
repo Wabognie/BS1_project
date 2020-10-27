@@ -18,7 +18,7 @@ k_s1 = 0.01
 
 t = 600
 eta = 2.0
-Q = 0.8
+Q = 0.4
 
 
 a = np.zeros(t)
@@ -44,7 +44,8 @@ C[0] = 0
 S[0] = 1
 Se[0] = 1
 
-time = np.arange(0,t,1)
+time = np.arange(0,t)
+
 
 for i in range(0,t-1):
     beta = random.gauss(1,0.05)
@@ -64,8 +65,12 @@ for i in range(0,t-1):
 amplitude_a = np.sin(a)
 amplitude_b = np.sin(b)
 amplitude_c = np.sin(c)
+amplitude_Se = np.sin(Se)
 
+"""
 plt.plot(time,amplitude_a)
 plt.plot(time,amplitude_b)
 plt.plot(time,amplitude_c)
+"""
+plt.plot(time, amplitude_Se)
 plt.show()
