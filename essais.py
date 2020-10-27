@@ -8,7 +8,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import random
 
-n = 2
+n = 10**4
 
 alpha = 216
 kappa = 20
@@ -16,9 +16,9 @@ k_s0 = 1
 k_s1 = 0.01
 
 
-t = 10
+t = 600
 eta = 2.0
-Q = 0.4
+Q = 0.8
 
 
 a = np.zeros(t)
@@ -44,6 +44,7 @@ C[0] = 0
 S[0] = 1
 Se[0] = 1
 
+time = np.arange(0,t,1)
 
 for i in range(0,t-1):
     beta = random.gauss(1,0.05)
@@ -60,5 +61,11 @@ for i in range(0,t-1):
 
     Se[i+1] = Q*np.mean(S[0:i+1])
 
-plt.plot(Se)
+amplitude_a = np.sin(a)
+amplitude_b = np.sin(b)
+amplitude_c = np.sin(c)
+
+plt.plot(time,amplitude_a)
+plt.plot(time,amplitude_b)
+plt.plot(time,amplitude_c)
 plt.show()
