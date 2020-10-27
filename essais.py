@@ -16,7 +16,7 @@ k_s0 = 1
 k_s1 = 0.01
 
 
-t = 5
+t = 10
 eta = 2.0
 Q = 0.4
 
@@ -58,11 +58,11 @@ for i in range(0,t-1):
 
     S[i+1] = S[i]+t*(-k_s0*S[i]+k_s1*A[i]-eta*(S[i]-Se[i]))
 
-    Se[i+1] = Q*np.sum(S[i])
+    Se[i+1] = Q*np.mean(S)
 
 #plt.plot(Se)
 #plt.plot(S)
 
-print(b)
-plt.plot(b)
+
+plt.plot(Se)
 plt.show()
