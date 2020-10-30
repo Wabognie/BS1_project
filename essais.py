@@ -49,6 +49,7 @@ for cells in range(0,10):
 
 
     time = np.arange(0,t)
+
     for i in range(0,t-1):
         a[i+1] = a[i] + tau *(-a[i]+(alpha/(1+C[i]**n)))
         b[i+1] = b[i] + tau *(-b[i]+(alpha/(1+A[i]**n)))
@@ -80,6 +81,8 @@ for cells in range(0,10):
 """
 essais des histogrammes deltaB/beta
 """
+
+import collections
 dic = {}
 for i in range(0,1000):
     beta = random.gauss(1,0.05)
@@ -89,7 +92,7 @@ for i in range(0,1000):
         dic[t] = 1
     else :
         dic[t] += 1
-
+dic = od = collections.OrderedDict(sorted(dic.items()))
 print(dic)
 print(dic.keys())
 plt.bar([ str(i) for i in dic.keys()], dic.values())
