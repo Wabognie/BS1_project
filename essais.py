@@ -62,6 +62,7 @@ for cells in range(0,10):
 
         Se[i+1] = Q*np.mean(S[0:i+1])
 
+    #print(Se)
     amplitude_a = np.transpose(a)
     amplitude_b = np.transpose(b)
     amplitude_c = np.transpose(c)
@@ -69,9 +70,27 @@ for cells in range(0,10):
     amplitude_Se = np.transpose(Se)
 
     #plt.plot(time,amplitude_a,label="a[i]")
-    plt.plot(time,amplitude_b)
+    #plt.plot(time,amplitude_b)
     #plt.plot(time,amplitude_c, label="c[i]")
     #plt.plot(time, amplitude_Se, label="Se[i]")
     #plt.plot(time,amplitude_S, label ="S[i]")
 
+#plt.show()
+
+"""
+essais des histogrammes deltaB/beta
+"""
+dic = {}
+for i in range(0,1000):
+    beta = random.gauss(1,0.05)
+    t = (0.05/beta)
+    t = round(t,3)
+    if t not in dic.keys():
+        dic[t] = 1
+    else :
+        dic[t] += 1
+
+print(dic)
+print(dic.keys())
+plt.bar([ str(i) for i in dic.keys()], dic.values())
 plt.show()
