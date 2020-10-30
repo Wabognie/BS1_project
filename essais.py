@@ -2,6 +2,7 @@
 BS1 project
 
 retry all figures of article
+repressilator, transpose idea : http://be150.caltech.edu/2020/content/lessons/08_repressilator.html
 """
 
 import numpy as np
@@ -12,7 +13,7 @@ import random
 
 for cells in range(0,10):
     ##constantes
-    n = 10**4
+    n = 2
     alpha = 216
     kappa = 20
     k_s0 = 1
@@ -21,8 +22,7 @@ for cells in range(0,10):
     eta = 2.0
     Q = 0.8
     beta = random.gauss(1,0.05)
-    tau = 0.1
-    print(beta)
+    tau = 0.4 ##a voir
 
     ##initialisation des matrices
     a = np.zeros(t)
@@ -47,9 +47,6 @@ for cells in range(0,10):
     S[0] = 0
     Se[0] = 0
 
-    print("new cell")
-    print(b)
-
 
     time = np.arange(0,t)
     for i in range(0,t-1):
@@ -65,14 +62,11 @@ for cells in range(0,10):
 
         Se[i+1] = Q*np.mean(S[0:i+1])
 
-    print(b)
-    amplitude_a = np.sin(a)
-    amplitude_b = np.sin(b)
-    print(amplitude_b)
-    amplitude_c = np.sin(c)
-    amplitude_S = np.sin(S)
-    amplitude_Se = np.sin(Se)
-
+    amplitude_a = np.transpose(a)
+    amplitude_b = np.transpose(b)
+    amplitude_c = np.transpose(c)
+    amplitude_S = np.transpose(S)
+    amplitude_Se = np.transpose(Se)
 
     #plt.plot(time,amplitude_a,label="a[i]")
     plt.plot(time,amplitude_b)
