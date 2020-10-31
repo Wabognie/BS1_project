@@ -17,9 +17,9 @@ k_s0 = 1
 k_s1 = 0.01
 t = 600
 eta = 2.0
-Q = 0.8
+Q = 0.4
 
-tau = 0.4 ##a voir
+tau = 0.4##a voi
 
 nb_cells = 10
 Se = np.zeros(t)
@@ -69,7 +69,8 @@ for cells in range(0,nb_cells):
             S_dict[i] = [float(S[i])]
         else :
             S_dict[i].append(float(S[i]))
-        Se[i+1] = np.mean(S_dict[i])
+
+        Se[i+1] = (Q*np.mean(S_dict[i]))
 
     amplitude_a = np.transpose(a)
     amplitude_b = np.transpose(b)
@@ -78,36 +79,30 @@ for cells in range(0,nb_cells):
     amplitude_Se = np.transpose(Se)
 
     #plt.plot(time,amplitude_a,label="a[i]")
-    plt.plot(time,amplitude_b)
+    #plt.plot(time,amplitude_b)
     #plt.plot(time,amplitude_c, label="c[i]")
     #plt.plot(time, amplitude_Se, label="Se[i]")
     #plt.plot(time,amplitude_S, label ="S[i]")
 #print(Se)
 
+#plt.show()
 
-plt.show()
+
+
 
 """
-essais des histogrammes deltaB/beta
-histogramme a comprendre
+essais frequence des oscillation
 
-import collections
-dic = {}
-for i in range(0,1000):
-    beta = random.gauss(1,0.05)
-    t = (0.05/beta)
-    t = round(t,3)
-    if t not in dic.keys():
-        dic[t] = 1
-    else :
-        dic[t] += 1
-
-dic = od = collections.OrderedDict(sorted(dic.items()))
-print(dic)
-print(dic.keys())
-plt.bar([ str(i) for i in dic.keys()], dic.values())
+import numpy.fft as fft
+spectrum = fft.fft(b)
+freq = fft.fftfreq(len(spectrum))
+plt.plot(freq, abs(spectrum))
 plt.show()
+print(spectrum)
+
 """
+
+
 """
 print("###########################")
 
