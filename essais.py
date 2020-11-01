@@ -18,7 +18,7 @@ k_s0 = 1
 k_s1 = 0.01
 t = 600
 eta = 2.0
-Q = 0.4
+Q = 0.8
 
 tau = 0.4
 
@@ -72,8 +72,9 @@ for cells in range(0,nb_cells):
         else :
             S_dict[i].append(float(S[i]))
 
-        Se[i] = (Q*np.mean(S_dict[i]))
-
+        for key in S_dict.keys():
+            if len(S_dict[key]) == int(cells) :
+                Se[i] = (Q*np.mean(S_dict[i]))
     amplitude_a = np.transpose(a)
     amplitude_b = np.transpose(b)
     amplitude_c = np.transpose(c)
@@ -81,11 +82,11 @@ for cells in range(0,nb_cells):
     amplitude_Se = np.transpose(Se)
 
     #plt.plot(time,amplitude_a,label="a[i]")
-    #plt.plot(time,amplitude_b)
+    plt.plot(time,amplitude_b)
     #plt.plot(time,amplitude_c, label="c[i]")
     #plt.plot(time, amplitude_Se, label="Se[i]")
     #plt.plot(time,amplitude_S, label ="S[i]")
-
+    """
     T = 60/(t/len(b))
     a = np.abs(fft.rfft(b, n=b.size))
     a[0]=0
@@ -101,10 +102,9 @@ for cells in range(0,nb_cells):
         p_dict[p] = 1
     else:
         p_dict[p] +=1
+    """
 #print(Se)
-print(p_dict)
-#plt.show()
-
+plt.show()
 
 
 ##essais frequence des oscillation
