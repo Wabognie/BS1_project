@@ -18,11 +18,11 @@ k_s0 = 1
 k_s1 = 0.01
 t = 600
 eta = 2.0
-Q = 0.8
+Q = 0.4
 
 tau = 0.4
 
-nb_cells = 10
+nb_cells = 1000
 Se = np.zeros(t)
 Se[0] = 0
 
@@ -40,7 +40,6 @@ for cells in range(0,nb_cells):
     C = np.zeros(t)
 
     S = np.zeros(t)
-
 
     a[0] = 0
     b[0] = 0
@@ -72,9 +71,10 @@ for cells in range(0,nb_cells):
         else :
             S_dict[i].append(float(S[i]))
 
-        for key in S_dict.keys():
-            if len(S_dict[key]) == int(cells) :
-                Se[i] = (Q*np.mean(S_dict[i]))
+        if len(S_dict[i]) == int(nb_cells) :
+            Se[i] = (Q*np.mean(S_dict[i]))
+
+
     amplitude_a = np.transpose(a)
     amplitude_b = np.transpose(b)
     amplitude_c = np.transpose(c)
@@ -86,26 +86,24 @@ for cells in range(0,nb_cells):
     #plt.plot(time,amplitude_c, label="c[i]")
     #plt.plot(time, amplitude_Se, label="Se[i]")
     #plt.plot(time,amplitude_S, label ="S[i]")
-    """
-    T = 60/(t/len(b))
-    a = np.abs(fft.rfft(b, n=b.size))
-    a[0]=0
-    freqs = fft.rfftfreq(b.size, d=1./T)
-    freqs = np.divide(60,freqs)
 
-    max_freq = freqs[np.argmax(a)]
-    #print("Cell of interest : " + str(cells))
-    #print("Peak found at %s second period (%s minutes)" % (max_freq, max_freq/60))
+    if len(b) > 0 :
+        T = 60/(t/len(b))
+        a = np.abs(fft.rfft(b, n=b.size))
+        a[0]=0
+        freqs = fft.rfftfreq(b.size, d=1./T)
+        freqs = np.divide(60,freqs)
 
-    p = round(1/max_freq, 3)
-    if p not in p_dict.keys():
-        p_dict[p] = 1
-    else:
-        p_dict[p] +=1
-    """
+        max_freq = freqs[np.argmax(a)]
+        p = round(1/max_freq, 4)
+        if p not in p_dict.keys():
+            p_dict[p] = 1
+        else:
+            p_dict[p] +=1
+
 #print(Se)
-plt.show()
-
+#plt.show()
+print(p_dict)
 
 ##essais frequence des oscillation
 ##problemme : frequence en hertz par la frequence des oscillation
