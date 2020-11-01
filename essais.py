@@ -8,6 +8,7 @@ repressilator, transpose idea : http://be150.caltech.edu/2020/content/lessons/08
 import numpy as np
 import matplotlib.pyplot as plt
 import random
+import numpy.fft as fft
 
 ##constantes
 n = 2
@@ -19,13 +20,14 @@ t = 600
 eta = 2.0
 Q = 0.4
 
-tau = 0.4##a voi
+tau = 0.4
 
 nb_cells = 10
 Se = np.zeros(t)
 Se[0] = 0
 
 S_dict={}
+p_dict={}
 for cells in range(0,nb_cells):
     beta = random.gauss(1,0.05)
     ##initialisation des matrices
@@ -70,7 +72,7 @@ for cells in range(0,nb_cells):
         else :
             S_dict[i].append(float(S[i]))
 
-        Se[i+1] = (Q*np.mean(S_dict[i]))
+        Se[i] = (Q*np.mean(S_dict[i]))
 
     amplitude_a = np.transpose(a)
     amplitude_b = np.transpose(b)
@@ -83,25 +85,38 @@ for cells in range(0,nb_cells):
     #plt.plot(time,amplitude_c, label="c[i]")
     #plt.plot(time, amplitude_Se, label="Se[i]")
     #plt.plot(time,amplitude_S, label ="S[i]")
-#print(Se)
 
+    T = 60/(t/len(b))
+    a = np.abs(fft.rfft(b, n=b.size))
+    a[0]=0
+    freqs = fft.rfftfreq(b.size, d=1./T)
+    freqs = np.divide(60,freqs)
+
+    max_freq = freqs[np.argmax(a)]
+    #print("Cell of interest : " + str(cells))
+    #print("Peak found at %s second period (%s minutes)" % (max_freq, max_freq/60))
+
+    p = round(1/max_freq, 3)
+    if p not in p_dict.keys():
+        p_dict[p] = 1
+    else:
+        p_dict[p] +=1
+#print(Se)
+print(p_dict)
 #plt.show()
 
 
 
-
+##essais frequence des oscillation
+##problemme : frequence en hertz par la frequence des oscillation
 """
-essais frequence des oscillation
 
-import numpy.fft as fft
 spectrum = fft.fft(b)
 freq = fft.fftfreq(len(spectrum))
 plt.plot(freq, abs(spectrum))
 plt.show()
-print(spectrum)
-
+print(freq)
 """
-
 
 """
 print("###########################")
