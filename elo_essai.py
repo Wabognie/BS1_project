@@ -11,10 +11,10 @@ k_s0 = 1
 k_s1 = 0.01
 t = 600
 eta = 2.0
-Q = 
-
-#for i in range(nCell):
-    #beta.append(random.gauss(1,0.05))
+Q = 0.8
+beta = []
+for i in range(nCell):
+    beta.append(random.gauss(1,0.05))
 tau = 0.5 ##a voir
 
 ##initialisation des matrices
@@ -55,7 +55,7 @@ for j in range(0, t-1):
 
         S[i,j+1] = S[i,j]+tau*((-k_s0*S[i,j])+(k_s1*A[i,j])-(eta*(S[i,j]-Se[i,j])))
 
-        Se[i,j+1] = Q*np.mean(S[:,j+1])
+        Se[i,j] = Q*np.mean(S[:,j])
 
 #plt.plot(time,amplitude_a,label="a[i]")
 for i in range(nCell):
