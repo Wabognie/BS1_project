@@ -44,14 +44,13 @@ time = np.arange(0,t)
 
 for j in range(0, t-1):
     for i in range(0, nCell):
-        beta= random.gauss(1,0.05)
         a[i,j+1] = a[i,j] + tau *(-a[i,j]+(alpha/(1+C[i,j]**n)))
         b[i,j+1] = b[i,j] + tau *(-b[i,j]+(alpha/(1+A[i,j]**n)))
         c[i,j+1] = c[i,j] + tau *(-c[i,j]+(alpha/(1+B[i,j]**n))+(kappa*S[i,j]/1+S[i,j]))
 
-        A[i,j+1] = A[i,j]+ tau*(beta*(a[i,j]-A[i,j]))
-        B[i,j+1] = B[i,j]+ tau*(beta*(b[i,j]-B[i,j]))
-        C[i,j+1] = C[i,j]+ tau*(beta*(c[i,j]-C[i,j]))
+        A[i,j+1] = A[i,j]+ tau*(beta[i]*(a[i,j]-A[i,j]))
+        B[i,j+1] = B[i,j]+ tau*(beta[i]*(b[i,j]-B[i,j]))
+        C[i,j+1] = C[i,j]+ tau*(beta[i]*(c[i,j]-C[i,j]))
 
         S[i,j+1] = S[i,j]+tau*((-k_s0*S[i,j])+(k_s1*A[i,j])-(eta*(S[i,j]-Se[i,j])))
 
