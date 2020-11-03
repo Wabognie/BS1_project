@@ -44,27 +44,27 @@ time = np.arange(0,t)
 
 for j in range(0, t-1):
     for i in range(0, nCell):
+        Se[i, j] = Q * np.mean(S[:, j])
 
         abis = a[i,j] + tau/2 *(-a[i,j]+(alpha/(1+C[i,j]**n)))
         bbis = b[i,j] + tau/2 *(-b[i,j]+(alpha/(1+A[i,j]**n)))
         cbis = c[i,j] + tau/2 *(-c[i,j]+(alpha/(1+B[i,j]**n))+(kappa*S[i,j]/1+S[i,j]))
 
-        a[i,j+1] = a[i,j] + tau *(-abis+(alpha/(1+C[i,j]**n)))
-        b[i,j+1] = b[i,j] + tau *(-bbis+(alpha/(1+A[i,j]**n)))
-        c[i,j+1] = c[i,j] + tau *(-cbis+(alpha/(1+B[i,j]**n))+(kappa*S[i,j]/1+S[i,j]))
-
         Abis = A[i, j] + tau/2 * (beta[i] * (a[i, j] - A[i, j]))
         Bbis = B[i, j] + tau/2 * (beta[i] * (b[i, j] - B[i, j]))
         Cbis = C[i, j] + tau/2 * (beta[i] * (c[i, j] - C[i, j]))
+
+        Sbis = S[i, j] + tau/2 * ((-k_s0 * S[i, j]) + (k_s1 * A[i, j]) - (eta * (S[i, j] - Se[i, j])))
+
+        a[i,j+1] = a[i,j] + tau *(-abis+(alpha/(1+Cbis**n)))
+        b[i,j+1] = b[i,j] + tau *(-bbis+(alpha/(1+Abis**n)))
+        c[i,j+1] = c[i,j] + tau *(-cbis+(alpha/(1+Bbis**n))+(kappa*Sbis/1+Sbis))
 
         A[i,j+1] = A[i, j]+ tau*(beta[i]*(abis-Abis))
         B[i,j+1] = B[i, j]+ tau*(beta[i]*(bbis-Bbis))
         C[i,j+1] = C[i, j]+ tau*(beta[i]*(cbis-Cbis))
 
-        Sbis = S[i,j]+tau/2*((-k_s0*S[i,j])+(k_s1*A[i,j])-(eta*(S[i,j]-Se[i,j])))
         S[i,j+1] = S[i,j]+tau*((-k_s0*Sbis)+(k_s1*Abis)-(eta*(Sbis-Se[i,j])))
-
-        Se[i,j] = Q*np.mean(S[:,j])
 
 #plt.plot(time,amplitude_a,label="a[i]")
 for i in range(nCell):
