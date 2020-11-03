@@ -1,8 +1,10 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import random
+import collections
+import numpy.fft as fft
 
-nCell = 10
+nCell = 1000
 ##constantes
 n = 2
 alpha = 216
@@ -12,10 +14,11 @@ k_s1 = 0.01
 t = 600
 eta = 2.0
 Q = 0.8
+
 beta = []
 for i in range(nCell):
     beta.append(random.gauss(1,0.05))
-tau = 0.5 ##a voir
+tau = 0.4 ##a voir
 
 ##initialisation des matrices
 a = np.zeros((nCell, t))
@@ -29,16 +32,18 @@ C = np.zeros((nCell, t))
 S = np.zeros((nCell, t))
 Se = np.zeros((nCell, t))
 
-a[:,0] = 0
-b[:,0] = 0
-c[:,0] = 0
+a[:,0] = random.randint(0,300)
+b[:,0] = random.randint(0,300)
+c[:,0] = random.randint(0,300)
 
-A[:,0] = 0
-B[:,0] = 0
-C[:,0] = 0
+A[:,0] = random.randint(0,300)
+B[:,0] = random.randint(0,300)
+C[:,0] = random.randint(0,300)
 
-S[:,0] = 0
-Se[:,0] = 0
+S[:,0] = random.randint(0,300)
+Se[:,0] = random.randint(0,300)
+
+frequence_list = []
 
 time = np.arange(0,t)
 
@@ -68,9 +73,21 @@ for j in range(0, t-1):
 
 #plt.plot(time,amplitude_a,label="a[i]")
 for i in range(nCell):
-    plt.plot(time,b[i])
+    #plt.plot(time,b[i])
+
+    T = 60/(t/len(b[i]))
+    a = np.abs(fft.rfft(b[i], n=b[i].size))
+    a[0]=0
+    freqs = fft.rfftfreq(b[i].size, d=1./T)
+    freqs = np.divide(60,freqs)
+    max_freq = freqs[np.argmax(a)]
+    p = round(1/max_freq, 3)
+
+    frequence_list.append(p)
 #plt.plot(time,amplitude_c, label="c[i]")
 #plt.plot(time, amplitude_Se, label="Se[i]")
 #plt.plot(time,amplitude_S, label ="S[i]")
 
+#plt.show()
+plt.hist(frequence_list)
 plt.show()
