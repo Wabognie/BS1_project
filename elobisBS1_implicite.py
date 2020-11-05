@@ -4,7 +4,9 @@ import random
 import collections
 import numpy.fft as fft
 
-nCell = 10000
+from scipy.signal import find_peaks
+
+nCell = 5
 ##constantes
 n = 2
 alpha = 216
@@ -71,22 +73,33 @@ for j in range(0, t-1):
 
         S[i,j] = S[i,j+1] - tau*((-k_s0*S[i,j+1])+(k_s1*A[i,j+1])-(eta*(S[i,j+1]-Se[i,j+1])))
 #plt.plot(time,amplitude_a,label="a[i]")
+
+
+freqs = []
 for i in range(nCell):
+    print(b[i])
     #plt.plot(time,b[i])
 
-    T = 60/(t/len(b[i]))
-    a = np.abs(fft.rfft(b[i], n=b[i].size))
-    a[0]=0
-    freqs = fft.rfftfreq(b[i].size, d=1./T)
-    freqs = np.divide(60,freqs)
-    max_freq = freqs[np.argmax(a)]
-    p = round(1/max_freq, 3)
+    peaks, _ = find_peaks(b[i])
 
-    frequence_list.append(p)
-#plt.plot(time,amplitude_c, label="c[i]")
-#plt.plot(time, amplitude_Se, label="Se[i]")
-#plt.plot(time,amplitude_S, label ="S[i]")
+    print(peaks)
+    periods = []
+
+    n = 0
+    for x in peaks :
+        if n < len(peaks)-1 :
+            period = peaks[n+1]-peaks[n]
+            periods.append(period)
+            freq = round(1/period,3)
+            freqs.append(freq)
+        else :
+            break
+        n+=1
+
+    print(periods)
+    print(freqs)
 
 #plt.show()
-plt.hist(frequence_list)
+
+plt.hist(freqs)
 plt.show()
