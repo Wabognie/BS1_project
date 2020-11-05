@@ -13,3 +13,4 @@ Python's packages :
     scipy
     matplotlib
     random
+    progress ; progress.bar
