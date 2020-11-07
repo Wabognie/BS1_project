@@ -111,13 +111,15 @@ for j in range(0, t-1):
 
     bar.next()
 
-freqs = []
+
+
+tot_freq=[]
 for i in range(nCell):
     plt.plot(time,b[i])
 
     peaks, _ = find_peaks(b[i])
     periods = []
-
+    freqs = []
     n = 0
     for x in peaks :
         if n < len(peaks)-1 :
@@ -126,14 +128,13 @@ for i in range(nCell):
             freq = 1/period
             freq = round(freq,5)
             freqs.append(freq)
-        else :
-            break
         n+=1
+    tot_freq.append(np.mean(freqs))
 
 
-plt.show()
-print(freqs)
 
 bar.finish()
-plt.hist(freqs, bins = 50, density = True)
+plt.show()
+
+plt.hist(tot_freq, bins = 50, density = True, range =(0,0.04))
 plt.show()
