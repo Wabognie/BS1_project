@@ -6,21 +6,22 @@ from scipy.signal import find_peaks
 from progress.bar import Bar
 
 
-nCell = 10000
+nCell = 1000
 ##constantes
 n = 2
-alpha = 216
+alpha = 116
 kappa = 20
 k_s0 = 1
 k_s1 = 0.01
 t = 600
 eta = 2.0
-Q = 0.4
+Q = 0.8
 
 beta = []
 for i in range(nCell):
     beta.append(random.gauss(1,0.05))
-tau = 0.4 ##a voir
+
+tau = 0.33 ##a voir
 
 bar = Bar("Progress", max=t-1)
 ##initialisation des matrices
@@ -36,41 +37,8 @@ S = np.zeros((nCell, t))
 Se = np.zeros((nCell, t))
 
 
-a[:,0] = random.randint(1,300)
-b[:,0] = random.randint(1,300)
-c[:,0] = random.randint(1,300)
-
-A[:,0] = 0
-B[:,0] = 0
-C[:,0] = 0
-
-S[:,0] = 0
-Se[:,0] = 0
-
-"""
-a[:,0] = random.randint(1,100)
-b[:,0] = random.randint(1,100)
-c[:,0] = random.randint(1,100)
-
-A[:,0] = random.randint(1,100)
-B[:,0] = random.randint(1,100)
-C[:,0] = random.randint(1,100)
-
-S[:,0] = random.randint(1,100)
-Se[:,0] = 0
-"""
-"""
-print(a[:,0])
-print(b[:,0])
-print(c[:,0])
-print(A[:,0])
-print(B[:,0])
-print(C[:,0])
-"""
-
-"""
 a[:,0] = 0
-b[:,0] = 0
+b[:,0] = 50
 c[:,0] = 0
 
 A[:,0] = 0
@@ -79,7 +47,7 @@ C[:,0] = 0
 
 S[:,0] = 0
 Se[:,0] = 0
-"""
+
 
 frequence_list = []
 
@@ -115,26 +83,41 @@ for j in range(0, t-1):
 
 tot_freq=[]
 for i in range(nCell):
-    plt.plot(time,b[i])
+    #plt.plot(time,b[i])
 
     peaks, _ = find_peaks(b[i])
+    peaks_l, _ = find_peaks(-b[i])
     periods = []
     freqs = []
     n = 0
     for x in peaks :
-        if n < len(peaks)-1 :
+        if n < len(peaks)-1 and n < len(peaks_l)-1:
             period = peaks[n+1]-peaks[n]
-            periods.append(period)
-            freq = 1/period
-            freq = round(freq,5)
-            freqs.append(freq)
+            period_l = peaks_l[n+1]-peaks_l[n]
+            freqs.append(period)
+            freqs.append(period_l)
+        else :
+            break
         n+=1
-    tot_freq.append(np.mean(freqs))
+    tot_freq.append(1/np.mean(freqs))
+
+
+fig, axs = plt.subplots(2)
+fig.suptitle("alph a: "+str(alpha)+", b : "+str(b[0,0])+", q :"+str(Q))
+
+
+cellplot = [random.randint(0,100) for p in range(0,10)]
+for i in cellplot :
+    #plt.plot(time, b[i])
+    axs[0].plot(time, b[i])
 
 
 
+#plt.savefig("./photos/euler_implicite_alpha_"+str(alpha)+"_b_"+str(b[0,0])+"_q_"+str(Q)+".jpg")
 bar.finish()
-plt.show()
+#plt.show()
+print(len(tot_freq))
 
-plt.hist(tot_freq, bins = 50, density = True, range =(0,0.04))
-plt.show()
+#plt.hist(tot_freq, bins = 50, range =(0.02,0.03))
+axs[1].hist(tot_freq, bins = 50, range =(0.02,0.03))
+plt.savefig("./photos/euler_implicite_alpha_"+str(alpha)+"_b_"+str(b[0,0])+"_q_"+str(Q)+".jpg")

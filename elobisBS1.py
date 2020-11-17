@@ -1,13 +1,14 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import random
-import collections
-import numpy.fft as fft
+
+from scipy.signal import find_peaks
+from progress.bar import Bar
 
 nCell = 1000
 ##constantes
 n = 2
-alpha = 216
+alpha = 116
 kappa = 20
 k_s0 = 1
 k_s1 = 0.01
@@ -18,9 +19,13 @@ Q = 0.8
 beta = []
 for i in range(nCell):
     beta.append(random.gauss(1,0.05))
-tau = 0.4 ##a voir
 
+
+tau = 0.33 ##a voir
+
+bar = Bar("Progress", max=t-1)
 ##initialisation des matrices
+
 a = np.zeros((nCell, t))
 b = np.zeros((nCell, t))
 c = np.zeros((nCell, t))
@@ -32,16 +37,16 @@ C = np.zeros((nCell, t))
 S = np.zeros((nCell, t))
 Se = np.zeros((nCell, t))
 
-a[:,0] = random.randint(0,300)
-b[:,0] = random.randint(0,300)
-c[:,0] = random.randint(0,300)
+a[:,0] = 0
+b[:,0] = 50
+c[:,0] = 0
 
-A[:,0] = random.randint(0,300)
-B[:,0] = random.randint(0,300)
-C[:,0] = random.randint(0,300)
+A[:,0] = 0
+B[:,0] = 0
+C[:,0] = 0
 
-S[:,0] = random.randint(0,300)
-Se[:,0] = random.randint(0,300)
+S[:,0] = 0
+Se[:,0] = 0
 
 frequence_list = []
 
@@ -71,23 +76,45 @@ for j in range(0, t-1):
 
         S[i,j+1] = S[i,j]+tau*((-k_s0*Sbis)+(k_s1*Abis)-(eta*(Sbis-Se[i,j])))
 
-#plt.plot(time,amplitude_a,label="a[i]")
+    bar.next()
+
+tot_freq=[]
 for i in range(nCell):
     #plt.plot(time,b[i])
 
-    T = 60/(t/len(b[i]))
-    a = np.abs(fft.rfft(b[i], n=b[i].size))
-    a[0]=0
-    freqs = fft.rfftfreq(b[i].size, d=1./T)
-    freqs = np.divide(60,freqs)
-    max_freq = freqs[np.argmax(a)]
-    p = round(1/max_freq, 3)
+    peaks, _ = find_peaks(b[i])
+    peaks_l, _ = find_peaks(-b[i])
+    periods = []
+    freqs = []
+    n = 0
+    for x in peaks :
+        if n < len(peaks)-1 and n < len(peaks_l)-1:
+            period = peaks[n+1]-peaks[n]
+            period_l = peaks_l[n+1]-peaks_l[n]
+            freqs.append(period)
+            freqs.append(period_l)
+        else :
+            break
+        n+=1
+    tot_freq.append(1/np.mean(freqs))
 
-    frequence_list.append(p)
-#plt.plot(time,amplitude_c, label="c[i]")
-#plt.plot(time, amplitude_Se, label="Se[i]")
-#plt.plot(time,amplitude_S, label ="S[i]")
 
+fig, axs = plt.subplots(2)
+fig.suptitle("alph a: "+str(alpha)+", b : "+str(b[0,0])+", q :"+str(Q))
+
+
+cellplot = [random.randint(0,100) for p in range(0,10)]
+for i in cellplot :
+    #plt.plot(time, b[i])
+    axs[0].plot(time, b[i])
+
+
+
+#plt.savefig("./photos/euler_implicite_alpha_"+str(alpha)+"_b_"+str(b[0,0])+"_q_"+str(Q)+".jpg")
+bar.finish()
 #plt.show()
-plt.hist(frequence_list)
-plt.show()
+print(len(tot_freq))
+
+#plt.hist(tot_freq, bins = 50, range =(0.02,0.03))
+axs[1].hist(tot_freq, bins = 50, range =(0.02,0.03))
+plt.savefig("./photos/euler_rangekuta_alpha_"+str(alpha)+"_b_"+str(b[0,0])+"_q_"+str(Q)+".jpg")
