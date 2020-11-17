@@ -1,6 +1,6 @@
-################  READ ME  ################
+# =====READ ME===== 
 
-BS1 project
+## BS1 project
     Group : Casy Tiphaine, Chateau Kevin, Germani Elodie, Prunier Gregoire
     Article : Modeling a synthetic multicellular clock : repressilators coupled by quorum sensing - Jordi Garcia-Ojalvo
 
@@ -8,7 +8,7 @@ BS1 project
     Model : bacteria
 
 
-Python's packages :
+## Python's packages :
     numpy
     scipy
     matplotlib
