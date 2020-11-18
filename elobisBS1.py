@@ -5,10 +5,10 @@ import random
 from scipy.signal import find_peaks
 from progress.bar import Bar
 
-nCell = 1000
+nCell = 10000
 ##constantes
 n = 2
-alpha = 116
+alpha = 112
 kappa = 20
 k_s0 = 1
 k_s1 = 0.01
@@ -100,14 +100,17 @@ for i in range(nCell):
 
 
 fig, axs = plt.subplots(2)
-fig.suptitle("alph a: "+str(alpha)+", b : "+str(b[0,0])+", q :"+str(Q))
+fig.subplots_adjust(hspace= 0.7)
+#fig.suptitle("alph a: "+str(alpha)+", b : "+str(b[0,0])+", q :"+str(Q))
 
 
-cellplot = [random.randint(0,100) for p in range(0,10)]
+cellplot = [random.randint(0,nCell-1) for p in range(0,10)]
 for i in cellplot :
     #plt.plot(time, b[i])
     axs[0].plot(time, b[i])
-
+    axs[0].set_title('Variation in cI production' + '\n'+'for 10 among 10,000 cells with cell density of ' + str(Q))
+    axs[0].set_ylabel('cI mRNA level' +'\n'+'(arbitrary units)')
+    axs[0].set_xlabel('time(min)')
 
 
 #plt.savefig("./photos/euler_implicite_alpha_"+str(alpha)+"_b_"+str(b[0,0])+"_q_"+str(Q)+".jpg")
@@ -116,5 +119,8 @@ bar.finish()
 print(len(tot_freq))
 
 #plt.hist(tot_freq, bins = 50, range =(0.02,0.03))
-axs[1].hist(tot_freq, bins = 50, range =(0.02,0.03))
-plt.savefig("./photos/euler_rangekuta_alpha_"+str(alpha)+"_b_"+str(b[0,0])+"_q_"+str(Q)+".jpg")
+axs[1].hist(tot_freq, bins = 20, range =(0.022,0.026))
+axs[1].set_title('Oscillation frequencies of cI production' + '\n' + 'for 10,000 cells with cell density of ' + str(Q))
+axs[1].set_ylabel('number of cells')
+axs[1].set_xlabel('frequency(min-1)')
+plt.savefig("./photosreun/euler_rangekuta_alpha_"+str(alpha)+"_b_"+str(b[0,0])+"_q_"+str(Q)+".jpg")
