@@ -14,15 +14,15 @@ alpha = 111
 kappa = 20
 k_s0 = 1
 k_s1 = 0.01
-t = 4500
-eta = 2.0
+t = 5000
+eta = 10
 
-D = 90
+D = 80
 
 beta = []
 for i in range(nCell):
     beta.append(random.gauss(1,0.05))
-tau = 0.04 ##a voir
+tau = 0.05 ##a voir
 
 '''
 Réalisation de la simulation pour Q = 1, les cellules sont en synchro parfaite.
@@ -86,7 +86,7 @@ for j in range(0, t-1):
     bar.next()
 
 '''
-Réalisation de la simulation pour Q = 0, les cellules sont en synchro parfaite.
+Réalisation de la simulation pour Q = 0, les cellules sont totalement en désynchro.
 '''
 Q = 0
 
@@ -147,49 +147,35 @@ for j in range(0, t-1):
     bar.next()
 
 
-btotQ1 = []
-for i in range(0, t):
-    binter = 0
-    for j in range(nCell):
-        binter += bQ1[j,i]
-    btotQ1.append(binter/nCell)
+fourierQ1list = []
+fourierQ2list = []
 
-btotQ2 = []
-for i in range(0, t):
-    binter = 0
-    for j in range(nCell):
-        binter += bQ2[j,i]
-    btotQ2.append(binter/nCell)
+for cell in range(nCell):
+    #Centralisation et normalisation de b
+    b1Q1norm = (bQ1[cell, :] - (max(bQ1[cell, :])/2))/(max(bQ1[cell, :])/2)
 
-#Centralisation de btot et b1
-btotQ1norm = (btotQ1 - (max(btotQ1)/2))/(max(btotQ1)/2)
-b1Q1norm = (bQ1[1, :] - (max(bQ1[1, :])/2))/(max(bQ1[1, :])/2)
+    b1Q2norm = (bQ2[cell, :] - (max(bQ2[cell, :])/2))/(max(bQ2[cell, :])/2)
 
-btotQ2norm = (btotQ2 - (max(btotQ2)/2))/(max(btotQ2)/2)
-b1Q2norm = (bQ2[1, :] - (max(bQ2[1, :])/2))/(max(bQ2[1, :])/2)
+    #Autocorrelation des valeurs : calcul la somme des multiplications des valeurs aux temps avec un décallage (b(t) * b(t+i))
+    autocorrelQ1 = np.correlate(b1Q1norm, b1Q1norm, mode="full")
+    autocorrelQ1 = autocorrelQ1[len(autocorrelQ1)//2:]
 
+    autocorrelQ2 = np.correlate(b1Q2norm, b1Q2norm, mode="full")
+    autocorrelQ2 = autocorrelQ2[len(autocorrelQ2)//2:]
 
-#Autocorrelation des valeurs : calcul la somme des multiplications des valeurs aux temps avec un décallage (b(t) * b(t+i))
-testAutocorrelQ1 = np.correlate(b1Q1norm, b1Q1norm, mode="full")
-testAutocorrelQ1 = testAutocorrelQ1[len(testAutocorrelQ1)//2:]
+    #soustraction de la moyenne des valeurs à toutes les valeurs :
+    averageautocorr = sum(autocorrelQ1)/len(autocorrelQ1)
+    autocorrelQ1 = autocorrelQ1 - averageautocorr
 
-testAutocorrelQ2 = np.correlate(b1Q2norm, b1Q2norm, mode="full")
-testAutocorrelQ2 = testAutocorrelQ2[len(testAutocorrelQ2)//2:]
+    averageautocorr = sum(autocorrelQ2)/len(autocorrelQ2)
+    autocorrelQ2 = autocorrelQ2 - averageautocorr
 
-#soustraction de la moyenne des valeurs à toutes les valeurs :
-averageautocorr = sum(testAutocorrelQ1)/len(testAutocorrelQ1)
-testAutocorrelQ1 = testAutocorrelQ1 - averageautocorr
+    #Réalisation des transformées de fourier et récupération dans une liste
+    fourierQ1list.append(np.fft.fft(autocorrelQ1))
+    fourierQ2list.append(np.fft.fft(autocorrelQ2))
 
-averageautocorr = sum(testAutocorrelQ2)/len(testAutocorrelQ2)
-testAutocorrelQ2 = testAutocorrelQ2 - averageautocorr
-
-
-#Autre test de plot direct d'une autocorrélation normalisée
-#plot_acf(btotQ1, lags=np.arange(len(btot)))
-
-
-#print(len(PSDlist))
-#print((len(tot_freq)))
+#calcul des fréquences fft
+freqfour=np.fft.fftfreq(len(autocorrelQ1),d=tau)
 
 bar.finish()
 plt.show()
@@ -199,31 +185,32 @@ plt.plot(b1Q2norm)
 plt.title("Plot de b pour une bactérie")
 plt.show()
 
-plt.plot(testAutocorrelQ1)
-plt.plot(testAutocorrelQ2)
+plt.plot(autocorrelQ1)
+plt.plot(autocorrelQ2)
 plt.title("Autocorrelation")
 plt.show()
 
-#print(len(tot_freq))
 
-#plt.plot(PSDnorm)
-#plt.show()
-#calcul de la transformée de fourier sur l'autocorrelation
-fourierQ1=np.fft.fft(testAutocorrelQ1)
-fourierQ2=np.fft.fft(testAutocorrelQ2)
+#calcul de la moyenne des fft:
+fourierQ1 = np.array([np.mean(k) for k in zip(*fourierQ1list)])
+fourierQ2 = np.array([np.mean(k) for k in zip(*fourierQ2list)])
 
-
-freqfour=np.fft.fftfreq(len(testAutocorrelQ1),d=tau)
-#print(fourier)
-#print(freqfour)
 
 #Plot de la transfo de fourier
 plt.plot(abs(freqfour), abs(fourierQ1), label = "Q = 1")
 plt.plot(abs(freqfour), abs(fourierQ2), label = "Q = 0")
 plt.xlabel('Frequence')
 plt.ylabel('PSD')
-plt.title("Fourier Transform")
+plt.title("Fourier Transform Mean")
 plt.legend()
 plt.xlim(0,0.2)
+plt.show()
 
+plt.plot(abs(freqfour), abs(fourierQ1list[1]), label = "Q = 1")
+plt.plot(abs(freqfour), abs(fourierQ2list[1]), label = "Q = 0")
+plt.xlabel('Frequence')
+plt.ylabel('PSD')
+plt.title("Fourier Transform for 1 cell")
+plt.legend()
+plt.xlim(0,0.2)
 plt.show()
